@@ -6,10 +6,12 @@ public class DinoEnemy : MonoBehaviour
     public Transform leftPoint;
     public Transform rightPoint;
     public GameObject deathEffectPrefab; // 拖入 enemy-death prefab
+    public AudioClip deathSound; // 拖入死亡音效
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool movingRight = false;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -21,6 +23,9 @@ public class DinoEnemy : MonoBehaviour
         rightPoint.parent = null;
 
         movingRight = false;
+
+        // 添加 AudioSource 组件
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -48,13 +53,19 @@ public class DinoEnemy : MonoBehaviour
         }
     }
 
-    //  玩家踩中我（由玩家调用）
+    // 玩家踩中我（由玩家调用）
     public void OnStomped()
     {
         // 播放死亡特效
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+        }
+
+        // 播放死亡音效
+        if (deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
         }
 
         // 通知最近的 DinoSpawner，我已经死了
@@ -64,10 +75,11 @@ public class DinoEnemy : MonoBehaviour
             spawner.Clear();
         }
 
-        Destroy(gameObject);
+        // 延迟销毁，等音效播放完成（如果你希望立刻销毁可以直接 Destroy(gameObject);）
+        Destroy(gameObject, deathSound != null ? deathSound.length : 0f);
     }
 
-    //  查找最近的 DinoSpawner
+    // 查找最近的 DinoSpawner
     private DinoSpawner FindClosestSpawner()
     {
         DinoSpawner[] spawners = FindObjectsOfType<DinoSpawner>();

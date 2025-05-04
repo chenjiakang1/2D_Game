@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip deathSound;
     private AudioSource audioSource;
 
+    // 双段跳相关
+    private int jumpCount;
+    public int maxJumpCount = 2;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -49,7 +53,14 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+
+        // 只有落地且在下落时才重置跳跃次数
+        if (isGrounded && rb.velocity.y <= 0f)
+        {
+            jumpCount = maxJumpCount;
+        }
     }
+
 
     void Move()
     {
@@ -66,10 +77,16 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && rb.gravityScale > 0.1f)
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            animator.SetTrigger("Jump");
+
+            if (jumpCount == maxJumpCount)
+            {
+                animator.SetTrigger("Jump");  // 只播放Jump，不管是第一次跳还是第二跳
+            }
+
+            jumpCount--;
         }
     }
 
@@ -143,6 +160,8 @@ public class PlayerController : MonoBehaviour
 
                     // 玩家弹跳
                     rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.8f);
+                    jumpCount = maxJumpCount - 1; // 踩怪后可以二段跳
+
                     return;
                 }
             }

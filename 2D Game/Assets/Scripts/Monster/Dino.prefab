@@ -187,6 +187,7 @@ MonoBehaviour:
   leftPoint: {fileID: 4941642481456493571}
   rightPoint: {fileID: 4941642481375094901}
   deathEffectPrefab: {fileID: 5707530567462617686, guid: bb7999b14662f284aaf139e4aa6e349d, type: 3}
+  deathSound: {fileID: 8300000, guid: 116cc8d8777fb4540bb4d360ee0c440d, type: 3}
 --- !u!61 &4941642481556314535
 BoxCollider2D:
   m_ObjectHideFlags: 0
