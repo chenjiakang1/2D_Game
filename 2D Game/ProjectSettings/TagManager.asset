@@ -8,6 +8,7 @@ TagManager:
   - Gem
   - Ladder
   - Enemy
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - UI
   - GroundCheck
   - Checkpoint
-  - 
+  - Enemy
   - 
   - 
   - 

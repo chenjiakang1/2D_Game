@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
+        // 掉下去判定
         if (transform.position.y < -7f && !isDead)
         {
             StartCoroutine(Die());
@@ -54,13 +55,12 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
 
-        // 只有落地且在下落时才重置跳跃次数
+        // 落地重置跳跃次数
         if (isGrounded && rb.velocity.y <= 0f)
         {
             jumpCount = maxJumpCount;
         }
     }
-
 
     void Move()
     {
@@ -81,15 +81,13 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
 
-            if (jumpCount == maxJumpCount)
-            {
-                animator.SetTrigger("Jump");  // 只播放Jump，不管是第一次跳还是第二跳
-            }
+            animator.SetTrigger("Jump");
 
             jumpCount--;
         }
     }
 
+    // 玩家死亡统一处理
     IEnumerator Die()
     {
         isDead = true;
@@ -115,23 +113,31 @@ public class PlayerController : MonoBehaviour
         Respawn();
     }
 
+    // 复活
     void Respawn()
     {
         Debug.Log("Respawning at starting position.");
         isDead = false;
 
-        Vector3 respawnPosition = new Vector3(-7.27f, -0.35f, 0f); // 可根据起点调整
+        Vector3 respawnPosition = new Vector3(-7.27f, -0.35f, 0f); // 固定起始位置（可改为存档点）
         transform.position = respawnPosition + Vector3.up * 0.5f;
 
         rb.velocity = Vector2.zero;
         rb.gravityScale = 1.5f;
 
-        // 恢复所有 Dino
         DinoSpawner[] spawners = FindObjectsOfType<DinoSpawner>();
         foreach (var s in spawners)
         {
             s.Spawn();
         }
+
+        // 恢复所有 TriangleTrap
+        TriangleTrap[] traps = FindObjectsOfType<TriangleTrap>();
+        foreach (var trap in traps)
+        {
+            trap.ResetTrap();
+        }
+
 
         StartCoroutine(EnableCollider());
     }
@@ -143,6 +149,7 @@ public class PlayerController : MonoBehaviour
         if (playerCollider != null) playerCollider.enabled = true;
     }
 
+    // 与怪物碰撞检测
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (!isDead && collision.collider.CompareTag("Enemy"))
@@ -151,26 +158,35 @@ public class PlayerController : MonoBehaviour
             {
                 if (contact.normal.y >= 0.5f)
                 {
-                    // 告诉敌人：你被踩了！
+                    // 踩到怪
                     DinoEnemy dino = collision.collider.GetComponent<DinoEnemy>();
                     if (dino != null)
                     {
                         dino.OnStomped();
                     }
 
-                    // 玩家弹跳
                     rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.8f);
-                    jumpCount = maxJumpCount - 1; // 踩怪后可以二段跳
+                    jumpCount = maxJumpCount - 1;
 
                     return;
                 }
             }
 
-            // 否则 → 玩家死亡
+            // 被怪打死
             StartCoroutine(Die());
         }
     }
 
+    // 陷阱杀死（TriangleTrap 调用这个）
+    public void KillByTrap()
+    {
+        if (!isDead)
+        {
+            StartCoroutine(Die());
+        }
+    }
+
+    // 画出检测区域（调试用）
     void OnDrawGizmos()
     {
         if (groundCheck != null)
