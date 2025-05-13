@@ -6,12 +6,8 @@ public class SpikeTrap : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            PlayerController player = other.GetComponent<PlayerController>();
-            if (player != null)
-            {
-                player.KillByTrap();
-            }
+            // 无论是哪个 PlayerController，都调用 KillByTrap 方法
+            other.SendMessage("KillByTrap", SendMessageOptions.DontRequireReceiver);
         }
     }
 }
-

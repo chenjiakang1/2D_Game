@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class CameraFollow : MonoBehaviour
@@ -8,6 +8,9 @@ public class CameraFollow : MonoBehaviour
     public Vector3 offset;
     public Tilemap tilemap;
 
+    public float minY = -3f;  //  å¯é…ç½®çš„ Y æœ€å°å€¼
+    public float maxY = 2f;   //  å¯é…ç½®çš„ Y æœ€å¤§å€¼
+
     private Camera cam;
     private Vector3 minWorld, maxWorld;
 
@@ -15,7 +18,13 @@ public class CameraFollow : MonoBehaviour
     {
         cam = Camera.main;
 
-        // »ñÈ¡ Tilemap µÄÊÀ½ç±ß½ç£¨ÈÔÈ»±£ÁôÓÃÓÚ X Öá£©
+        if (tilemap == null)
+        {
+            Debug.LogError("Tilemap æœªè®¾ç½®ï¼Œè¯·æ£€æŸ¥ CameraFollow è„šæœ¬çš„ tilemap å¼•ç”¨ï¼");
+            return;
+        }
+
+        // è·å– Tilemap çš„ä¸–ç•Œè¾¹ç•Œï¼ˆç”¨äºé™åˆ¶ X è½´ï¼‰
         BoundsInt bounds = tilemap.cellBounds;
         minWorld = tilemap.CellToWorld(bounds.min);
         maxWorld = tilemap.CellToWorld(bounds.max);
@@ -25,30 +34,25 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target != null)
+        if (target != null && cam != null)
         {
             Vector3 desiredPosition = target.position + offset;
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
 
-            // ¼ÆËãÉãÏñ»úµÄ¿ÉÊÓ·¶Î§
             float camHeight = cam.orthographicSize * 2;
             float camWidth = camHeight * cam.aspect;
 
-            // ĞŞÕı X Öá Clamp ÏŞÖÆ
+            // é™åˆ¶ X
             float minX = minWorld.x + camWidth / 2;
             float maxX = maxWorld.x - camWidth / 2;
 
-            // **Ç¿ÖÆÏŞÖÆ Y Öá·¶Î§ÔÚ [-1, 1]**
-            float minY = -3;
-            float maxY = 2;
+            if (maxX > minX)
+                smoothedPosition.x = Mathf.Clamp(smoothedPosition.x, minX, maxX);
 
-            // Ö»ÓĞµ±±ß½ç×ã¹»´óÊ±²Å½øĞĞ Clamp£¬·ñÔòÔÊĞíÉãÏñ»ú×ÔÓÉÒÆ¶¯
-            if (maxX > minX) smoothedPosition.x = Mathf.Clamp(smoothedPosition.x, minX, maxX);
+            // é™åˆ¶ Y ä½¿ç”¨å˜é‡
             smoothedPosition.y = Mathf.Clamp(smoothedPosition.y, minY, maxY);
 
             transform.position = smoothedPosition;
         }
     }
 }
-
-

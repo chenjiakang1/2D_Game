@@ -1,11 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class TriangleTrap : MonoBehaviour
 {
-    public float fallDistance = 8f;      // µôÂä¾àÀë
-    public float fallSpeed = 5f;         // µôÂäËÙ¶È
-    public float shakeTime = 0.5f;       // µôÂäÇ°¶¶¶¯Ê±¼ä
-    public float shakeAmount = 0.1f;     // ¶¶¶¯Ç¿¶È
+    public float fallDistance = 8f;
+    public float fallSpeed = 5f;
+    public float shakeTime = 0.5f;
+    public float shakeAmount = 0.1f;
+
+    public bool startHidden = false;   // åˆå§‹æ˜¯å¦éšè—
+    public bool rotateZ90 = false;     // æ˜¯å¦æ—‹è½¬Zè½´ 90åº¦ï¼ˆæ°´å¹³æ¨¡å¼ï¼‰
 
     private Vector3 targetPosition;
     private bool isFalling = false;
@@ -13,6 +16,7 @@ public class TriangleTrap : MonoBehaviour
 
     private Collider2D triggerCollider;
     private Collider2D killCollider;
+    private SpriteRenderer spriteRenderer;
 
     private Vector3 originalPosition;
     private Vector3 startPosition;
@@ -21,7 +25,6 @@ public class TriangleTrap : MonoBehaviour
     void Start()
     {
         Collider2D[] colliders = GetComponents<Collider2D>();
-
         foreach (Collider2D col in colliders)
         {
             if (col.isTrigger)
@@ -30,52 +33,89 @@ public class TriangleTrap : MonoBehaviour
                 killCollider = col;
         }
 
-        killCollider.enabled = false;  // µôÂäÉ±ÈËÓÃColliderÄ¬ÈÏ½ûÓÃ
+        killCollider.enabled = false;
 
-        // ¼ÇÂ¼³õÊ¼Î»ÖÃ£¨ÖØÖÃÊ±Ê¹ÓÃ£©
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null && startHidden)
+        {
+            spriteRenderer.enabled = false;
+        }
+
+        if (rotateZ90)
+        {
+            transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+        }
+
         startPosition = transform.position;
-        targetPosition = transform.position + Vector3.down * fallDistance;
+
+        if (rotateZ90)
+            targetPosition = transform.position + Vector3.left * fallDistance;
+        else
+            targetPosition = transform.position + Vector3.down * fallDistance;
+
         originalPosition = transform.position;
     }
 
     void Update()
     {
-        if (isShaking)
+        if (rotateZ90)
         {
-            shakeTimer -= Time.deltaTime;
-
-            Vector3 shakeOffset = new Vector3(Random.Range(-shakeAmount, shakeAmount), Random.Range(-shakeAmount, shakeAmount), 0);
-            transform.position = originalPosition + shakeOffset;
-
-            if (shakeTimer <= 0f)
+            if (isFalling)
             {
-                isShaking = false;
-                isFalling = true;
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, fallSpeed * Time.deltaTime);
+                if (!killCollider.enabled) killCollider.enabled = true;
+
+                if (transform.position == targetPosition)
+                {
+                    FinishTrap(); //  æ¨¡æ‹Ÿâ€œé”€æ¯â€çŠ¶æ€
+                }
             }
         }
-        else if (isFalling)
+        else
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, fallSpeed * Time.deltaTime);
-
-            if (!killCollider.enabled)
+            if (isShaking)
             {
-                killCollider.enabled = true;
+                shakeTimer -= Time.deltaTime;
+                Vector3 shakeOffset = new Vector3(
+                    Random.Range(-shakeAmount, shakeAmount),
+                    Random.Range(-shakeAmount, shakeAmount),
+                    0);
+                transform.position = originalPosition + shakeOffset;
+
+                if (shakeTimer <= 0f)
+                {
+                    isShaking = false;
+                    isFalling = true;
+                }
             }
-
-            if (transform.position == targetPosition)
+            else if (isFalling)
             {
-                Destroy(gameObject); // µôÂäÍê³É£¬Ïú»Ù
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, fallSpeed * Time.deltaTime);
+                if (!killCollider.enabled) killCollider.enabled = true;
+
+                if (transform.position == targetPosition)
+                {
+                    FinishTrap(); //  æ¨¡æ‹Ÿâ€œé”€æ¯â€çŠ¶æ€
+                }
             }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isFalling && !isShaking && other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isFalling && !isShaking)
         {
-            // Íæ¼Ò½øÈë´¥·¢ ¡ú ¿ªÊ¼¶¶¶¯
-            isShaking = true;
-            shakeTimer = shakeTime;
+            if (spriteRenderer != null) spriteRenderer.enabled = true;
+
+            if (rotateZ90)
+            {
+                isFalling = true;
+            }
+            else
+            {
+                isShaking = true;
+                shakeTimer = shakeTime;
+            }
         }
     }
 
@@ -83,23 +123,37 @@ public class TriangleTrap : MonoBehaviour
     {
         if (isFalling && collision.collider.CompareTag("Player"))
         {
-            // ÔÒµ½Íæ¼Ò ¡ú Íæ¼ÒËÀÍö
-            PlayerController player = collision.collider.GetComponent<PlayerController>();
-            if (player != null)
-            {
-                player.SendMessage("KillByTrap");
-            }
+            collision.collider.SendMessage("KillByTrap", SendMessageOptions.DontRequireReceiver);
         }
     }
 
-    // ĞÂÔö£ºÖØÖÃÏİÚå
+    private void FinishTrap()
+    {
+        isFalling = false;
+
+        //  æ¨¡æ‹Ÿâ€œé”€æ¯â€ï¼šç¦ç”¨æ‰€æœ‰ç»„ä»¶ä½†ä¿ç•™å¯¹è±¡ä»¥ä¾¿ Reset
+        if (killCollider != null) killCollider.enabled = false;
+        if (triggerCollider != null) triggerCollider.enabled = false;
+        if (spriteRenderer != null) spriteRenderer.enabled = false;
+    }
+
     public void ResetTrap()
     {
         transform.position = startPosition;
         isShaking = false;
         isFalling = false;
-        killCollider.enabled = false;
+
+        if (triggerCollider != null) triggerCollider.enabled = true;
+        if (killCollider != null) killCollider.enabled = false;
+
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = !startHidden;
+
         originalPosition = startPosition;
-        targetPosition = startPosition + Vector3.down * fallDistance;
+
+        if (rotateZ90)
+            targetPosition = startPosition + Vector3.left * fallDistance;
+        else
+            targetPosition = startPosition + Vector3.down * fallDistance;
     }
 }

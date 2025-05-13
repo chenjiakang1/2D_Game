@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead = false;
 
     public bool allowMovement = true;
+    public bool allowFallDeath = true;  // ✅ 控制是否因掉落死亡
 
     public AudioClip deathSound;
     private AudioSource audioSource;
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private int jumpCount;
     public int maxJumpCount = 2;
 
-    private Vector3 checkpointPosition; //  复活点位置
+    private Vector3 checkpointPosition; // 复活点位置
 
     void Start()
     {
@@ -36,7 +37,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isIdle", true);
         animator.ResetTrigger("Hurt");
 
-        checkpointPosition = transform.position; //  默认复活点为初始位置
+        checkpointPosition = transform.position;
     }
 
     void Update()
@@ -47,7 +48,8 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        if (transform.position.y < -7f && !isDead)
+        // ✅ 可选的掉出地图死亡判断
+        if (allowFallDeath && transform.position.y < -7f && !isDead)
         {
             StartCoroutine(Die());
         }
@@ -116,7 +118,6 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Respawning at checkpoint.");
         isDead = false;
 
-        //  使用 checkpointPosition 而不是固定点
         transform.position = checkpointPosition + Vector3.up * 0.5f;
 
         rb.velocity = Vector2.zero;
@@ -173,7 +174,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //  提供给旗帜调用的复活点设置函数
     public void SetCheckpoint(Vector3 newCheckpoint)
     {
         checkpointPosition = newCheckpoint;
