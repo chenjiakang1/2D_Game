@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -20,9 +20,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip deathSound;
     private AudioSource audioSource;
 
-    // Ë«¶ÎÌøÏà¹Ø
     private int jumpCount;
     public int maxJumpCount = 2;
+
+    private Vector3 checkpointPosition; //  å¤æ´»ç‚¹ä½ç½®
 
     void Start()
     {
@@ -34,6 +35,8 @@ public class PlayerController : MonoBehaviour
         isDead = false;
         animator.SetBool("isIdle", true);
         animator.ResetTrigger("Hurt");
+
+        checkpointPosition = transform.position; //  é»˜è®¤å¤æ´»ç‚¹ä¸ºåˆå§‹ä½ç½®
     }
 
     void Update()
@@ -44,7 +47,6 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        // µôÏÂÈ¥ÅĞ¶¨
         if (transform.position.y < -7f && !isDead)
         {
             StartCoroutine(Die());
@@ -55,7 +57,6 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
 
-        // ÂäµØÖØÖÃÌøÔ¾´ÎÊı
         if (isGrounded && rb.velocity.y <= 0f)
         {
             jumpCount = maxJumpCount;
@@ -80,14 +81,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-
             animator.SetTrigger("Jump");
-
             jumpCount--;
         }
     }
 
-    // Íæ¼ÒËÀÍöÍ³Ò»´¦Àí
     IEnumerator Die()
     {
         isDead = true;
@@ -113,14 +111,13 @@ public class PlayerController : MonoBehaviour
         Respawn();
     }
 
-    // ¸´»î
     void Respawn()
     {
-        Debug.Log("Respawning at starting position.");
+        Debug.Log("Respawning at checkpoint.");
         isDead = false;
 
-        Vector3 respawnPosition = new Vector3(-7.27f, -0.35f, 0f); // ¹Ì¶¨ÆğÊ¼Î»ÖÃ£¨¿É¸ÄÎª´æµµµã£©
-        transform.position = respawnPosition + Vector3.up * 0.5f;
+        //  ä½¿ç”¨ checkpointPosition è€Œä¸æ˜¯å›ºå®šç‚¹
+        transform.position = checkpointPosition + Vector3.up * 0.5f;
 
         rb.velocity = Vector2.zero;
         rb.gravityScale = 1.5f;
@@ -131,13 +128,11 @@ public class PlayerController : MonoBehaviour
             s.Spawn();
         }
 
-        // »Ö¸´ËùÓĞ TriangleTrap
         TriangleTrap[] traps = FindObjectsOfType<TriangleTrap>();
         foreach (var trap in traps)
         {
             trap.ResetTrap();
         }
-
 
         StartCoroutine(EnableCollider());
     }
@@ -149,7 +144,6 @@ public class PlayerController : MonoBehaviour
         if (playerCollider != null) playerCollider.enabled = true;
     }
 
-    // Óë¹ÖÎïÅö×²¼ì²â
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (!isDead && collision.collider.CompareTag("Enemy"))
@@ -158,26 +152,19 @@ public class PlayerController : MonoBehaviour
             {
                 if (contact.normal.y >= 0.5f)
                 {
-                    // ²Èµ½¹Ö
                     DinoEnemy dino = collision.collider.GetComponent<DinoEnemy>();
-                    if (dino != null)
-                    {
-                        dino.OnStomped();
-                    }
+                    if (dino != null) dino.OnStomped();
 
                     rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.8f);
                     jumpCount = maxJumpCount - 1;
-
                     return;
                 }
             }
 
-            // ±»¹Ö´òËÀ
             StartCoroutine(Die());
         }
     }
 
-    // ÏİÚåÉ±ËÀ£¨TriangleTrap µ÷ÓÃÕâ¸ö£©
     public void KillByTrap()
     {
         if (!isDead)
@@ -186,7 +173,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // »­³ö¼ì²âÇøÓò£¨µ÷ÊÔÓÃ£©
+    //  æä¾›ç»™æ——å¸œè°ƒç”¨çš„å¤æ´»ç‚¹è®¾ç½®å‡½æ•°
+    public void SetCheckpoint(Vector3 newCheckpoint)
+    {
+        checkpointPosition = newCheckpoint;
+        Debug.Log("Checkpoint updated: " + checkpointPosition);
+    }
+
     void OnDrawGizmos()
     {
         if (groundCheck != null)

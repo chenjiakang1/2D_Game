@@ -41,7 +41,7 @@ public class LoginManager : MonoBehaviour
 
                 // 登录成功后延迟 0.5 秒进入 Sample Scene
                 yield return new WaitForSeconds(3f);
-                SceneManager.LoadScene("SampleScene");
+                SceneManager.LoadScene("The Awakening Trial");
             }
             else
             {

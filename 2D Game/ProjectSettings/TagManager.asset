@@ -9,6 +9,7 @@ TagManager:
   - Ladder
   - Enemy
   - Trap
+  - MovingPlatform
   layers:
   - Default
   - TransparentFX
