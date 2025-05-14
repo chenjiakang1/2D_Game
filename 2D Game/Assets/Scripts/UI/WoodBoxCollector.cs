@@ -1,19 +1,24 @@
 using UnityEngine;
-using TMPro;  // 如果你用的是 TextMeshPro
+using TMPro;
 
 public class WoodBoxCollector : MonoBehaviour
 {
-    public int woodCount = 0;  // 当前木头数量
-    public TextMeshProUGUI woodCountText;  // UI文本组件，显示数量
+    public int woodCount = 0;
+    public TextMeshProUGUI woodCountText;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        //Debug.Log("Triggered: " + other.name);
         if (other.CompareTag("WoodBox"))
         {
+            WoodBox box = other.GetComponent<WoodBox>();
+            if (box == null || box.isCollected)
+                return;
+
+            box.isCollected = true;  // ✅ 标记为已拾取，防止重复
+
             woodCount++;
             UpdateWoodUI();
-            Destroy(other.gameObject);  // 移除木箱子
+            Destroy(other.gameObject);
         }
     }
 
