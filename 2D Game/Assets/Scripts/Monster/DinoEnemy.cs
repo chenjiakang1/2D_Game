@@ -5,11 +5,16 @@ public class DinoEnemy : MonoBehaviour
     public float moveSpeed = 2f;
     public Transform leftPoint;
     public Transform rightPoint;
-    public GameObject deathEffectPrefab; // ÍÏÈë enemy-death prefab
-    public AudioClip deathSound; // ÍÏÈëËÀÍöÒôĞ§
+    public GameObject deathEffectPrefab;
+    public AudioClip deathSound;
+
+    [Header("å¢™ä½“æ£€æµ‹è®¾ç½®")]
+    public Vector2 wallCheckBoxSize = new Vector2(0.1f, 0.5f);
+    public LayerMask groundLayer;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
+    private BoxCollider2D boxCollider;
     private bool movingRight = false;
     private AudioSource audioSource;
 
@@ -17,24 +22,23 @@ public class DinoEnemy : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
-        // È·±£ Patrol µã²»¸úËæ Dino ÒÆ¶¯
         leftPoint.parent = null;
         rightPoint.parent = null;
 
         movingRight = false;
 
-        // Ìí¼Ó AudioSource ×é¼ş
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void FixedUpdate()
     {
+        // ç§»åŠ¨
         Vector2 velocity = rb.velocity;
         velocity.x = movingRight ? moveSpeed : -moveSpeed;
         rb.velocity = new Vector2(velocity.x, rb.velocity.y);
 
-        // ·ÀÖ¹ÇáÎ¢ Y ¶¶¶¯
         if (Mathf.Abs(rb.velocity.y) < 0.01f)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0f);
@@ -42,7 +46,7 @@ public class DinoEnemy : MonoBehaviour
 
         sr.flipX = movingRight;
 
-        // Ñ²Âß±ß½çÅĞ¶Ï
+        // âœ… ä¼˜å…ˆåˆ¤æ–­æ˜¯å¦åˆ°è¾¾å·¡é€»è¾¹ç•Œ
         if (movingRight && transform.position.x >= rightPoint.position.x - 0.05f)
         {
             movingRight = false;
@@ -51,35 +55,46 @@ public class DinoEnemy : MonoBehaviour
         {
             movingRight = true;
         }
+        else
+        {
+            // âœ… æ²¡æ’åˆ°è¾¹ç•Œï¼Œå†æ£€æŸ¥å‰æ–¹æ˜¯å¦æœ‰å¢™ä½“
+            float colliderHalfWidth = boxCollider.bounds.extents.x;
+            float extraOffset = 0.05f;
+            Vector2 horizontalOffset = new Vector2(movingRight ? (colliderHalfWidth + extraOffset) : -(colliderHalfWidth + extraOffset), 0f);
+            Vector2 verticalOffset = new Vector2(0f, 0.2f); // ä¸Šç§»ï¼Œé¿å…æ£€æµ‹åœ°é¢
+            Vector2 checkPosition = (Vector2)transform.position + horizontalOffset + verticalOffset;
+
+            Collider2D hit = Physics2D.OverlapBox(checkPosition, wallCheckBoxSize, 0f, groundLayer);
+            if (hit != null && Mathf.Abs(rb.velocity.x) > 0.01f)
+            {
+                //Debug.Log("Wall detected by OverlapBox. Turning around.");
+                rb.velocity = new Vector2(0f, rb.velocity.y);
+                movingRight = !movingRight;
+            }
+        }
     }
 
-    // Íæ¼Ò²ÈÖĞÎÒ£¨ÓÉÍæ¼Òµ÷ÓÃ£©
     public void OnStomped()
     {
-        // ²¥·ÅËÀÍöÌØĞ§
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
         }
 
-        // ²¥·ÅËÀÍöÒôĞ§
         if (deathSound != null)
         {
             audioSource.PlayOneShot(deathSound);
         }
 
-        // Í¨Öª×î½üµÄ DinoSpawner£¬ÎÒÒÑ¾­ËÀÁË
         DinoSpawner spawner = FindClosestSpawner();
         if (spawner != null)
         {
             spawner.Clear();
         }
 
-        // ÑÓ³ÙÏú»Ù£¬µÈÒôĞ§²¥·ÅÍê³É£¨Èç¹ûÄãÏ£ÍûÁ¢¿ÌÏú»Ù¿ÉÒÔÖ±½Ó Destroy(gameObject);£©
         Destroy(gameObject, deathSound != null ? deathSound.length : 0f);
     }
 
-    // ²éÕÒ×î½üµÄ DinoSpawner
     private DinoSpawner FindClosestSpawner()
     {
         DinoSpawner[] spawners = FindObjectsOfType<DinoSpawner>();
@@ -97,5 +112,19 @@ public class DinoEnemy : MonoBehaviour
         }
 
         return closest;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (boxCollider == null) return;
+
+        float colliderHalfWidth = Application.isPlaying ? boxCollider.bounds.extents.x : 0.5f;
+        float extraOffset = 0.05f;
+        Vector2 horizontalOffset = new Vector2(movingRight ? (colliderHalfWidth + extraOffset) : -(colliderHalfWidth + extraOffset), 0f);
+        Vector2 verticalOffset = new Vector2(0f, 0.2f);
+        Vector2 pos = (Vector2)transform.position + horizontalOffset + verticalOffset;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(pos, wallCheckBoxSize);
     }
 }
