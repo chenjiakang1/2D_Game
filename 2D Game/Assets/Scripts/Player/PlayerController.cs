@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead = false;
 
     public bool allowMovement = true;
-    public bool allowFallDeath = true;  // ✅ 控制是否因掉落死亡
+    public bool allowFallDeath = true;
 
     public AudioClip deathSound;
     private AudioSource audioSource;
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private int jumpCount;
     public int maxJumpCount = 2;
 
-    private Vector3 checkpointPosition; // 复活点位置
+    private Vector3 checkpointPosition;
 
     void Start()
     {
@@ -48,7 +48,6 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        // ✅ 可选的掉出地图死亡判断
         if (allowFallDeath && transform.position.y < -7f && !isDead)
         {
             StartCoroutine(Die());
@@ -58,6 +57,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        animator.SetBool("isGrounded", isGrounded);  // ✅ 同步给 Animator
 
         if (isGrounded && rb.velocity.y <= 0f)
         {
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            animator.SetTrigger("Jump");
+            //animator.SetTrigger("Jump");  // ✅ 使用 Trigger 触发跳跃动画
             jumpCount--;
         }
     }

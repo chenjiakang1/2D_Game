@@ -51,11 +51,12 @@ public class LadderClimb : MonoBehaviour
         if (isClimbing)
         {
             float v = Input.GetAxis("Vertical");
+            float h = Input.GetAxis("Horizontal");
 
-            rb.velocity = new Vector2(0f, v * climbSpeed);
-            animator.SetFloat("ClimbSpeed", Mathf.Abs(v));
-
-            if (Mathf.Abs(v) > 0.01f)
+            // 攀爬状态允许左右移动
+            rb.velocity = new Vector2(h * climbSpeed, v * climbSpeed);
+            animator.SetFloat("ClimbSpeed", Mathf.Max(Mathf.Abs(v), Mathf.Abs(h)));
+            if (Mathf.Abs(v) > 0.01f || Mathf.Abs(h) > 0.01f)
             {
                 if (stopAnimCoroutine != null)
                 {
