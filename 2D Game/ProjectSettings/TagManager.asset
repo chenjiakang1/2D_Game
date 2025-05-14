@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - Trap
   - MovingPlatform
+  - WoodBox
   layers:
   - Default
   - TransparentFX
