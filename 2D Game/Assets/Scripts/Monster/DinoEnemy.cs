@@ -12,6 +12,12 @@ public class DinoEnemy : MonoBehaviour
     public Vector2 wallCheckBoxSize = new Vector2(0.1f, 0.5f);
     public LayerMask groundLayer;
 
+    [Header("生命值设置")]
+    public int maxHealth = 3;
+    private int currentHealth;
+
+    public HealthBarUI healthBarUI;  // ✅（可选）用于显示敌人血条
+
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private BoxCollider2D boxCollider;
@@ -23,18 +29,20 @@ public class DinoEnemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
+        audioSource = gameObject.AddComponent<AudioSource>();
 
         leftPoint.parent = null;
         rightPoint.parent = null;
 
         movingRight = false;
+        currentHealth = maxHealth;
 
-        audioSource = gameObject.AddComponent<AudioSource>();
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth, maxHealth);
     }
 
     void FixedUpdate()
     {
-        // 移动
         Vector2 velocity = rb.velocity;
         velocity.x = movingRight ? moveSpeed : -moveSpeed;
         rb.velocity = new Vector2(velocity.x, rb.velocity.y);
@@ -46,7 +54,6 @@ public class DinoEnemy : MonoBehaviour
 
         sr.flipX = movingRight;
 
-        // ✅ 优先判断是否到达巡逻边界
         if (movingRight && transform.position.x >= rightPoint.position.x - 0.05f)
         {
             movingRight = false;
@@ -57,24 +64,37 @@ public class DinoEnemy : MonoBehaviour
         }
         else
         {
-            // ✅ 没撞到边界，再检查前方是否有墙体
             float colliderHalfWidth = boxCollider.bounds.extents.x;
             float extraOffset = 0.05f;
             Vector2 horizontalOffset = new Vector2(movingRight ? (colliderHalfWidth + extraOffset) : -(colliderHalfWidth + extraOffset), 0f);
-            Vector2 verticalOffset = new Vector2(0f, 0.2f); // 上移，避免检测地面
+            Vector2 verticalOffset = new Vector2(0f, 0.2f);
             Vector2 checkPosition = (Vector2)transform.position + horizontalOffset + verticalOffset;
 
             Collider2D hit = Physics2D.OverlapBox(checkPosition, wallCheckBoxSize, 0f, groundLayer);
             if (hit != null && Mathf.Abs(rb.velocity.x) > 0.01f)
             {
-                //Debug.Log("Wall detected by OverlapBox. Turning around.");
                 rb.velocity = new Vector2(0f, rb.velocity.y);
                 movingRight = !movingRight;
             }
         }
     }
 
-    public void OnStomped()
+    // ✅ 被主角攻击时调用
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        Debug.Log(gameObject.name + " 受到攻击，当前血量：" + currentHealth);
+
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth, maxHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
     {
         if (deathEffectPrefab != null)
         {

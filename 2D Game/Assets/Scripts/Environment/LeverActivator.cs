@@ -21,7 +21,7 @@ public class LeverActivator : MonoBehaviour
     {
         if (isPlayerNear && !activated)
         {
-            if (Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 if (platform != null)
                     platform.SetActive(true);

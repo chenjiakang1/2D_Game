@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hintText: {fileID: 1993945225533846876}
-  message: Press the "K" key
+  message: Press the "F" key
 --- !u!1 &5641524549366505030
 GameObject:
   m_ObjectHideFlags: 0
