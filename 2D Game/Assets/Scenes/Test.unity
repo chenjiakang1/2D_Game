@@ -215,7 +215,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4898197014416077736, guid: 069e9a79b000a024db73c733ad273e5a, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4898197014416077736, guid: 069e9a79b000a024db73c733ad273e5a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -345,7 +345,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &277793395
 GameObject:
@@ -381,7 +381,7 @@ Transform:
   - {fileID: 1095179826}
   - {fileID: 924259688}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &385510198
 GameObject:
@@ -540,7 +540,7 @@ Transform:
   - {fileID: 1432567272}
   - {fileID: 32697285}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &562245159
 GameObject:
@@ -757,7 +757,7 @@ RectTransform:
   m_Children:
   - {fileID: 1469091187}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -875,30 +875,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &1020524540 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2281774828242158824, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-  m_PrefabInstance: {fileID: 1166116792}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1020524548 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-  m_PrefabInstance: {fileID: 1166116792}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1020524549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020524540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39bb295fed0194b8a967d2cd84d9e0f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  woodCount: 0
-  woodCountText: {fileID: 1176261329}
 --- !u!1 &1068115581
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,7 +941,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1095179825
 GameObject:
@@ -1078,67 +1054,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1001 &1166116792
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2281774828242158822, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: allowFallDeath
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158824, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_Name
-      value: player-idle-1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -10.54
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2281774828242158827, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 412b4614b05fa9a4d8d611434bcebd03, type: 3}
 --- !u!1 &1176261327
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,7 +2070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ddd1a25222bb84f84d2b4237513981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1020524548}
+  target: {fileID: 0}
   smoothSpeed: 0.125
   offset: {x: 0, y: 0, z: -10}
   tilemap: {fileID: 1407026963}
@@ -2175,7 +2090,7 @@ PrefabInstance:
     - target: {fileID: 3676982469170391906, guid: 9ab10992d27e34ce1a0d289784562b7c, type: 3}
       propertyPath: woodBoxCollector
       value: 
-      objectReference: {fileID: 1020524549}
+      objectReference: {fileID: 0}
     - target: {fileID: 3676982469170391906, guid: 9ab10992d27e34ce1a0d289784562b7c, type: 3}
       propertyPath: revealInsteadOfHide
       value: 0
