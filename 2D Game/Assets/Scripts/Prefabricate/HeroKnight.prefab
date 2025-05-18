@@ -608,3 +608,5 @@ MonoBehaviour:
     m_Bits: 256
   attackDamage: 1
   healthBarUI: {fileID: 0}
+  idleSprite: {fileID: 0}
+  hurtSound: {fileID: 8300000, guid: b1abc8b530e9b422499eb4fc244a34e6, type: 3}

@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     public float rollDuration = 0.3f;
 
     public Transform attackPoint;
-    public float attackRange = 3f;
+    public float attackRange = 5f;
     public LayerMask enemyLayers;
     public int attackDamage = 1;
 
@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour
 
     private float blockSoundCooldown = 1f;
     private float blockSoundTimer = 0f;
+
+    public AudioClip hurtSound; // ✅ 玩家受击音效
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -206,6 +208,7 @@ public class PlayerController : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<DinoEnemy>()?.TakeDamage(attackDamage);
+            enemy.GetComponent<BeeEnemy>()?.TakeDamage(1f); 
         }
 
         attackTimer = attackCooldown;
@@ -269,19 +272,36 @@ void OnDrawGizmosSelected()
         }
     }
 
-    void TakeDamage(float amount)
+    public void TakeDamage(float amount)
+{
+    if (isDead) return;
+
+    // ✅ 加入格挡判断：格挡状态下免疫伤害
+    if (isBlocking)
     {
-        if (isDead) return;
-
-        currentHealth -= amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-        healthBarUI.SetHealth(currentHealth, maxHealth);
-
-        if (currentHealth <= 0f)
+        if (blockSound != null && audioSource != null && blockSoundTimer <= 0f)
         {
-            StartCoroutine(Die());
+            audioSource.PlayOneShot(blockSound);
+            blockSoundTimer = blockSoundCooldown;
         }
+        return; // 直接无伤
     }
+
+    currentHealth -= amount;
+    currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+    healthBarUI.SetHealth(currentHealth, maxHealth);
+
+    // 播放受击音效
+    if (hurtSound != null && audioSource != null)
+    {
+        audioSource.PlayOneShot(hurtSound);
+    }
+
+    if (currentHealth <= 0f)
+    {
+        StartCoroutine(Die());
+    }
+}
 
     void OnCollisionEnter2D(Collision2D collision)
 {

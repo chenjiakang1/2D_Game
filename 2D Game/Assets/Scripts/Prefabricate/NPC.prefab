@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 3676982469170391934}
   - component: {fileID: 3676982469170391929}
   - component: {fileID: 3676982469170391928}
-  - component: {fileID: 3676982469170391935}
   - component: {fileID: 3676982469170391932}
   - component: {fileID: 3676982469170391933}
   - component: {fileID: 3676982469170391906}
+  - component: {fileID: 4977605795139744773}
   m_Layer: 0
   m_Name: Rabbit_Npc
   m_TagString: Untagged
@@ -110,19 +110,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3676982469170391935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3676982469170391931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4db68194db1cc61458353c49a3e6df57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hintUI: {fileID: 3676982469812355521}
 --- !u!61 &3676982469170391932
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -178,9 +165,24 @@ MonoBehaviour:
   woodBoxCollector: {fileID: 0}
   requiredWood: 6
   hiddenObject: {fileID: 0}
+  revealInsteadOfHide: 1
   defaultText: {fileID: 3676982469367815203}
   insufficientText: {fileID: 3676982471289285489}
   extraImageObject: {fileID: 3676982469401911074}
+--- !u!114 &4977605795139744773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3676982469170391931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8392f2cd6a92490488a17b5585719e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintText: {fileID: 3676982469812355527}
+  message: Press F to chat
 --- !u!1 &3676982469258593298
 GameObject:
   m_ObjectHideFlags: 0
