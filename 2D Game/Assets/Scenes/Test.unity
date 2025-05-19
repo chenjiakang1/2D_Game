@@ -1609,6 +1609,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   woodCount: 0
   woodCountText: {fileID: 2019057240}
+--- !u!4 &736571205 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6585489186483583677, guid: c670d395ac3d04176b50fcc76cfbf5b5, type: 3}
+  m_PrefabInstance: {fileID: 1307359161}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &842905323
 GameObject:
   m_ObjectHideFlags: 0
@@ -3682,7 +3687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ddd1a25222bb84f84d2b4237513981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
+  target: {fileID: 736571205}
   smoothSpeed: 0.125
   offset: {x: 0, y: 0, z: -10}
   tilemap: {fileID: 1407026963}
