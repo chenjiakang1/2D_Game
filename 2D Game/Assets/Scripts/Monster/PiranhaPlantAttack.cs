@@ -70,10 +70,10 @@ public class PiranhaPlantAttack : MonoBehaviour
     {
         if (player != null)
         {
-            PlayerController pc = player.GetComponent<PlayerController>();
-            if (pc != null)
+            PlayerHealth ph = player.GetComponent<PlayerHealth>();
+            if (ph != null)
             {
-                pc.TakeDamage(damageAmount);
+                ph.TakeDamage(damageAmount);
             }
         }
     }

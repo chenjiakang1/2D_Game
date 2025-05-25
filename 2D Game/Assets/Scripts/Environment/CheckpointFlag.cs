@@ -2,27 +2,27 @@ using UnityEngine;
 
 public class CheckpointFlag : MonoBehaviour
 {
-    private bool isPlayerNear = false;       // Íæ¼ÒÊÇ·ñÔÚ·¶Î§ÄÚ
-    private bool checkpointSet = false;      // ÊÇ·ñÒÑ¾­ÉèÖÃ¹ı
+    private bool isPlayerNear = false;       // 
+    private bool checkpointSet = false;      // 
 
     void Update()
     {
-        // Èç¹ûÍæ¼ÒÔÚ·¶Î§ÄÚ£¬ÉĞÎ´ÉèÖÃ¹ı´æµµ£¬²¢ÇÒ°´ÏÂ E ¼ü
         if (isPlayerNear && !checkpointSet && Input.GetKeyDown(KeyCode.E))
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
             {
-                PlayerController player = playerObj.GetComponent<PlayerController>();
-                if (player != null)
+                PlayerHealth ph = playerObj.GetComponent<PlayerHealth>();
+                if (ph != null)
                 {
-                    player.SetCheckpoint(transform.position);  // µ÷ÓÃÍæ¼ÒµÄ¸´»îµã¸üĞÂº¯Êı
+                    ph.SetCheckpoint(transform.position);
                     checkpointSet = true;
-                    Debug.Log(" Checkpoint saved at: " + transform.position);
+                    Debug.Log("[Checkpoint] å­˜æ¡£è®¾ç½®æˆåŠŸï¼");
                 }
             }
         }
     }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {

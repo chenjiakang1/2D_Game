@@ -24,6 +24,10 @@ public class DinoEnemy : MonoBehaviour
     private bool movingRight = false;
     private AudioSource audioSource;
 
+    private float damageInterval = 1f; // 每秒造成一次伤害
+    private float lastDamageTime = -1f;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -147,4 +151,21 @@ public class DinoEnemy : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(pos, wallCheckBoxSize);
     }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            if (Time.time - lastDamageTime >= damageInterval)
+            {
+                PlayerHealth ph = collision.collider.GetComponent<PlayerHealth>();
+                if (ph != null)
+                {
+                    ph.TakeDamage(10f);
+                    lastDamageTime = Time.time;
+                    Debug.Log("[DinoEnemy] 每秒造成 10 点持续伤害");
+                }
+            }
+        }
+    }
+
 }
