@@ -10,9 +10,7 @@ public class BossSimpleHealth : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
-        if (healthBarUI != null)
-            healthBarUI.SetHealth(currentHealth, maxHealth);
+        ResetHealth(); // 初始时满血
     }
 
     public void TakeDamage(float amount)
@@ -37,5 +35,14 @@ public class BossSimpleHealth : MonoBehaviour
         Debug.Log("[Boss] 已死亡");
         Destroy(gameObject); // 或者触发动画
     }
-}
 
+    // ✅ 添加此方法：恢复满血
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        isDead = false;
+
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth, maxHealth);
+    }
+}

@@ -42,6 +42,9 @@ public class BeeEnemy : MonoBehaviour
     private GameObject player;
     private bool playerDetected = false;
 
+    private SpriteRenderer spriteRenderer;
+
+
     void Start()
     {
         startPos = transform.position;
@@ -49,6 +52,8 @@ public class BeeEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
 
         audioSource = GetComponent<AudioSource>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
 
         currentHealth = maxHealth;
         if (healthBarUI != null)
@@ -96,7 +101,7 @@ public class BeeEnemy : MonoBehaviour
         bool hitWall = Physics2D.OverlapCircle(checkPos, patrolRadius, groundLayer);
 
         float offsetX = Mathf.Abs(transform.position.x - startPos.x);
-        bool outOfBounds = offsetX > maxOffsetX || newY < minY || newY > maxY;
+        bool outOfBounds = offsetX > maxOffsetX; // ✅ 只检查 X，不检查 Y
 
         if ((hitWall || outOfBounds) && currentTime - lastBounceTime > bounceCooldown)
         {
@@ -109,6 +114,7 @@ public class BeeEnemy : MonoBehaviour
         transform.position += move;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
+
 
     void ApproachAndAttack(float time, float distanceToPlayer)
     {
@@ -127,18 +133,28 @@ public class BeeEnemy : MonoBehaviour
         }
     }
 
+
+
     void ShootStinger()
     {
         if (stingPrefab == null || firePoint == null) return;
 
+        Vector2 dir = (player.transform.position - firePoint.position).normalized;
+
         GameObject sting = Instantiate(stingPrefab, firePoint.position, Quaternion.identity);
+
+        // 🛠️ 修正方向：加180度让图像面向飞行方向
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        sting.transform.rotation = Quaternion.Euler(0, 0, angle + 180f);
+
         Rigidbody2D rb = sting.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            Vector2 dir = (player.transform.position - firePoint.position).normalized;
             rb.velocity = dir * stingSpeed;
         }
     }
+
+
 
     public void TakeDamage(float damage)
     {
@@ -184,18 +200,14 @@ public class BeeEnemy : MonoBehaviour
 
     void Flip()
     {
-        Vector3 scale = transform.localScale;
-        scale.x = Mathf.Abs(scale.x) * (movingRight ? -1f : 1f);
-        transform.localScale = scale;
-
-        if (healthBarUI != null)
+        // ✅ 使用 SpriteRenderer 翻转，不影响子物体
+        if (spriteRenderer != null)
         {
-            Transform bar = healthBarUI.transform;
-            Vector3 barScale = bar.localScale;
-            barScale.x = Mathf.Abs(barScale.x);
-            bar.localScale = barScale;
+            spriteRenderer.flipX = movingRight;
         }
     }
+
+
 
     void OnDrawGizmosSelected()
     {
