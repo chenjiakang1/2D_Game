@@ -2640,6 +2640,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map1BGM
       objectReference: {fileID: 0}
+    - target: {fileID: 4898197014416077739, guid: 069e9a79b000a024db73c733ad273e5a, type: 3}
+      propertyPath: m_Volume
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 069e9a79b000a024db73c733ad273e5a, type: 3}
 --- !u!1001 &150012804
@@ -46401,7 +46405,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6089661381384135476, guid: c64328427859643f68123bce53ea59a1, type: 3}
       propertyPath: targetSceneName
-      value: Test
+      value: Four level
       objectReference: {fileID: 0}
     - target: {fileID: 6089661381384135480, guid: c64328427859643f68123bce53ea59a1, type: 3}
       propertyPath: m_SortingOrder
@@ -298312,7 +298316,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
