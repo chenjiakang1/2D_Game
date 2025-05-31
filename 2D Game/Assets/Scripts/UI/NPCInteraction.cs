@@ -76,7 +76,13 @@ public class NPCInteraction : MonoBehaviour
     {
         if (woodBoxCollector.woodCount >= requiredWood)
         {
-            // ✅ 根据开关设置物体是显示还是隐藏
+            //  扣除木头
+            woodBoxCollector.woodCount -= requiredWood;
+
+            //  更新 UI 显示
+            woodBoxCollector.SendMessage("UpdateWoodUI");
+
+            //  根据开关设置物体是显示还是隐藏
             if (hiddenObject != null)
                 hiddenObject.SetActive(revealInsteadOfHide);
 
@@ -89,7 +95,7 @@ public class NPCInteraction : MonoBehaviour
             if (extraImageObject != null)
                 extraImageObject.SetActive(true);
 
-            // 销毁 NPC 的父对象或自身
+            //  销毁 NPC 的父对象或自身
             if (transform.parent != null)
                 Destroy(transform.parent.gameObject);
             else
@@ -107,4 +113,5 @@ public class NPCInteraction : MonoBehaviour
                 extraImageObject.SetActive(false);
         }
     }
+
 }

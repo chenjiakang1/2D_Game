@@ -96,8 +96,15 @@ public class PlayerHealth : MonoBehaviour
         foreach (var s in FindObjectsOfType<DinoSpawner>()) s.Spawn();
         foreach (var trap in FindObjectsOfType<TriangleTrap>()) trap.ResetTrap();
 
+        
+        foreach (var boss in FindObjectsOfType<BossSimpleHealth>())
+        {
+            boss.ResetHealth();
+        }
+
         StartCoroutine(WaitThenRevive());
     }
+
 
     IEnumerator WaitThenRevive()
     {
@@ -105,4 +112,14 @@ public class PlayerHealth : MonoBehaviour
         rb.gravityScale = 1.5f;
         if (playerCollider != null) playerCollider.enabled = true;
     }
+
+    public void Heal(float amount)
+    {
+        if (isDead) return;
+
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        healthBarUI?.SetHealth(currentHealth, maxHealth);
+    }
+
 }
