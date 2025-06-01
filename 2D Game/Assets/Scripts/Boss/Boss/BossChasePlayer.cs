@@ -190,23 +190,27 @@ public class BossChasePlayer : MonoBehaviour
         if (player == null || boltPrefab == null) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
-        float playerHeight = player.position.y;
-
-        if ((distance < 10f || distance > 15f) && playerHeight <= 2.5f) return;
+        if (distance > 15f) return;
 
         Debug.Log("[Boss] 触发能量球释放");
+
         if (audioSource != null && boltCastSound != null)
             audioSource.PlayOneShot(boltCastSound);
 
         StartCoroutine(FadeBackEffect());
 
         Vector3 facingDir = isFacingRight ? Vector3.right : Vector3.left;
-        Vector3 basePos = transform.position + facingDir * 1.5f;
 
-        Instantiate(boltPrefab, basePos + Vector3.up * 0.5f, Quaternion.identity);
+        // ✅ 更靠近 Boss 前方的发射基础位置（靠前 0.8f）
+        Vector3 basePos = transform.position + facingDir * 0.8f;
+
+        // ✅ 发射三发能量球，间距更紧凑（上下 ±1.5f）
+        Instantiate(boltPrefab, basePos + Vector3.up * 1.5f, Quaternion.identity);
         Instantiate(boltPrefab, basePos, Quaternion.identity);
-        Instantiate(boltPrefab, basePos + Vector3.down * 0.5f, Quaternion.identity);
+        Instantiate(boltPrefab, basePos + Vector3.down * 1.5f, Quaternion.identity);
     }
+
+
 
     IEnumerator FadeBackEffect()
     {
@@ -234,12 +238,16 @@ public class BossChasePlayer : MonoBehaviour
         backEffect.color = new Color(1, 1, 1, 0);
     }
 
-    // ✅ 可视化矩形追击范围
     void OnDrawGizmosSelected()
     {
+        //  可视化 Boss 的矩形追击区域
         Gizmos.color = Color.red;
         Vector3 center = transform.position;
-        Vector3 size = new Vector3(20f, 4f, 0f); // 左右10，高度3
+        Vector3 size = new Vector3(20f, 4f, 0f); // 左右10，高度4
         Gizmos.DrawWireCube(center, size);
+
+        //  可视化远程攻击触发范围（圆形）
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 15f);
     }
 }
